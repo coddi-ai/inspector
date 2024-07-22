@@ -1,5 +1,5 @@
 import streamlit as st
-from main import process_audio
+from aux_func import process_audio
 from PIL import Image
 import os
 import time
