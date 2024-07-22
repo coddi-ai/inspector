@@ -20,7 +20,18 @@ def transcribe_audio(client, audio_file):
     )
     return transcription.text
 
-def refine_transcription(client, transcription, system_prompt='', temperature=0.8):
+def refine_transcription(client, transcription, temperature=0.8):
+    system_prompt = """
+Eres un asistente que extrae la información relevante para explicar una inspección visual. 
+Transforma el texto entregado, para que explique de manera clara y concisa lo observado en la inspección, centrandose en los hechos y observaciones generadas.
+El contexto de los reportes es en contexto minero, haciendo inspecciones manuales sobre equipos, por lo cual se espera que se utilicen conceptos técnicos de minería y mecanica.
+El texto generado debe tener el siguiente formato:
+Fecha (si es que está disponible)
+* Observaciones (en bullet points).
+
+Errores comunes:
+palaciete = Pala 7
+"""
     response = client.chat.completions.create(
         model="gpt-4o",
         temperature=temperature,
@@ -35,7 +46,6 @@ def process_audio(audio_path):
     client = get_client()
     audio_file = open(audio_path, "rb")
     transcription = transcribe_audio(client, audio_file)
-    # system_prompt = 
-    # refined_transcription = refine_transcription(client, transcription, system_prompt)
+    transcription = refine_transcription(client, transcription)
 
     return transcription
