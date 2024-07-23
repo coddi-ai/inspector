@@ -7,9 +7,9 @@ import logging
 
 def get_client():
     try:
-        api_key = os.getenv("OPENAI_API_KEY")
-    except:
         api_key = st.secrets["secret_key"]
+    except:
+        api_key = os.getenv("OPENAI_API_KEY")
        
     if not api_key:
         raise ValueError("No OpenAI API key found in environment variables")
