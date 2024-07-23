@@ -55,7 +55,7 @@ if uploaded_audio is not None:
             audio_path = converted_audio_path
 
         # Display the uploaded audio file
-        st.audio(audio_path, format='audio/mpeg')
+        st.audio(audio_path)
 
 # Process button
 if uploaded_image is not None and uploaded_audio is not None and machine and component:
