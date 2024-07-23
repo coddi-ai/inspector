@@ -1,28 +1,22 @@
 import streamlit as st
-from aux_func import process_audio
+from utils import process_audio
 from PIL import Image
 import os
 import time
-
-# Function to store data (dummy function)
-def store_data(image_path, audio_path, machine, component):
-    st.write(f"Image stored at: {image_path}")
-    st.write(f"Audio stored at: {audio_path}")
-    st.write(f"Machine: {machine}")
-    st.write(f"Component: {component}")
-
-# Set up the Streamlit app
-st.title("Image and Audio Upload MVP")
+import subprocess
 
 # Create a base directory to save the uploaded files
 base_upload_dir = "uploads"
 if not os.path.exists(base_upload_dir):
     os.makedirs(base_upload_dir)
-
+    
 # Sidebar for machine and component information
 st.sidebar.header("Machine and Component Information")
 machine = st.sidebar.text_input("Machine")
 component = st.sidebar.text_input("Component")
+
+# Set up the Streamlit app
+st.title("Image and Audio Upload MVP")
 
 # Capture image using camera
 st.header("Capture an Image")
@@ -53,16 +47,21 @@ if uploaded_audio is not None:
         audio_path = os.path.join(upload_dir, uploaded_audio.name)
         with open(audio_path, "wb") as f:
             f.write(uploaded_audio.getbuffer())
+        
+        # Convert audio to mp3 if it is not in mp3 format
+        if not audio_path.endswith(".mp3"):
+            converted_audio_path = os.path.join(upload_dir, "audio.mp3")
+            subprocess.run(["ffmpeg", "-i", audio_path, converted_audio_path])
+            audio_path = converted_audio_path
+
         # Display the uploaded audio file
-        st.audio(uploaded_audio, format='audio/' + uploaded_audio.name.split('.')[-1])
+        st.audio(audio_path, format='audio/mp3')
 
 # Process button
 if uploaded_image is not None and uploaded_audio is not None and machine and component:
     if st.button("Process"):
         st.write("Processing audio...")
         processed_audio_result = process_audio(audio_path)
-        # store_data(image_path, audio_path, machine, component)
-        # st.write("Processing complete. Files have been stored.")
         st.write(f"{processed_audio_result}")
 else:
     st.write("Please fill in all the information and upload both files to proceed.")

@@ -1,12 +1,16 @@
-import requests
 import streamlit as st
+import requests
 import os
 from openai import OpenAI
 from io import BytesIO
 import logging
 
 def get_client():
-    api_key = st.secrets["secret_key"]
+    try:
+        api_key = os.getenv("OPENAI_API_KEY")
+    except:
+        api_key = st.secrets["secret_key"]
+       
     if not api_key:
         raise ValueError("No OpenAI API key found in environment variables")
     client = OpenAI(api_key=api_key)
