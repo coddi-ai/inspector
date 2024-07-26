@@ -4,10 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pytube = "*"
 openai = "*"
 pydub = "*"
 streamlit = "*"
+ffmpeg = "*"
+pillow = "*"
+python-dotenv = "*"
+azure-storage-blob = "*"
+azure-identity = "*"
 
 [dev-packages]
 ipykernel = "*"
