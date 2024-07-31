@@ -5,6 +5,7 @@ import time
 import subprocess
 from dotenv import load_dotenv
 import os
+from audio_recorder_streamlit import audio_recorder
 
 load_dotenv()
 
@@ -31,9 +32,11 @@ if uploaded_image is not None:
 
 # Audio upload
 st.header("Upload an Audio File")
-uploaded_audio = st.file_uploader("Record an audio...", type=["mp3", "wav"])
+uploaded_audio = audio_recorder(text = 'Record audio',
+                                # energy_threshold = (-1,1),
+                                pause_threshold = 2.0,)
 if uploaded_audio is not None:
-    audio_buffer = bytes(uploaded_audio.getbuffer())
+    audio_buffer = uploaded_audio
     # Display the uploaded audio file
     st.audio(uploaded_audio, format='audio/mpeg')
 
@@ -43,7 +46,7 @@ if uploaded_image is not None and uploaded_audio is not None:
         print("Uploading files to Azure Storage...")
         upload_time = int(time.time())
         image_blob_name = f"upload_{upload_time}/image.jpg"
-        audio_blob_name = f"upload_{upload_time}/{uploaded_audio.name}"
+        audio_blob_name = f"upload_{upload_time}/audio.mp3"
 
         print("Uploading images to Azure Storage...")
         # Upload both files to Azure Storage

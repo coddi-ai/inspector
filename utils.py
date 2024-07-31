@@ -103,3 +103,49 @@ def process_audio(audio_file_name):
         return (response.text, 1)
     else:
         return (f"Error: {response.status_code} - {response.text}", 0)
+
+##############
+# OpenAI API #
+##############
+
+from openai import OpenAI
+
+def get_client():
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("No OpenAI API key found in environment variables")
+    client = OpenAI(api_key=api_key)
+    return client
+
+def transcribe_audio(client, file):
+
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        language='es',
+        file=file,
+    )
+    return transcription.text
+
+def refine_transcription(client, transcription, system_prompt='', temperature=0.8):
+#     system_prompt = """
+# Eres un asistente que extrae la información relevante para explicar una inspección visual. 
+# Transforma el texto entregado, para que explique de manera clara y concisa lo observado en la inspección, centrandose en los hechos y observaciones generadas.
+# El contexto de los reportes es en contexto minero, haciendo inspecciones manuales sobre equipos, por lo cual se espera que se utilicen conceptos técnicos de minería y mecanica.
+# El texto generado debe tener el siguiente formato:
+# Fecha (si es que está disponible)
+# * Observaciones (en bullet points).
+
+
+# Errores comunes:
+# palaciete = Pala 7
+# winch = winche
+# """
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        temperature=temperature,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": transcription}
+        ]
+    )
+    return response.choices[0].message.content
