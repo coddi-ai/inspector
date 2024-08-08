@@ -17,6 +17,7 @@ component = st.sidebar.text_input("Component")
 # Set up the Streamlit app
 st.title("Image and Audio Upload MVP")
 
+
 # Capture image using camera
 st.header("Capture an Image")
 uploaded_image = st.camera_input("Take a picture")
